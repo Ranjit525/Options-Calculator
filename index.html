@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- SEO Meta Tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Options Trading Profit/Loss & Brokerage Calculator</title>
+    <meta name="description" content="Calculate your Options Trading Net Profit & Loss (P&L), capital used, and track brokerage charges instantly. Perfect for Indian index options like Nifty 50 and BankNifty.">
+    <meta name="keywords" content="options trading calculator, P&L calculator, Nifty 50 calculator, brokerage calculator, stock market tools, options profitability">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://aapka-username.github.io/options-calculator/">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --primary: #3b82f6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .header-text {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .calculator-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 14px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: white;
+            font-size: 16px;
+            outline: none;
+            transition: border 0.3s;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .results-box {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 12px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid #334155;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 15px;
+        }
+
+        .result-row:last-child {
+            margin-bottom: 0;
+            padding-top: 15px;
+            border-top: 1px dashed #334155;
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .profit-text { color: var(--success); }
+        .loss-text { color: var(--danger); }
+
+        /* SEO Text Area for AdSense Approval */
+        .seo-content {
+            margin-top: 50px;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 16px;
+            line-height: 1.6;
+            color: var(--text-muted);
+        }
+        
+        .seo-content h2 {
+            color: var(--text-main);
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header-text">
+            <h1>Options P&L Calculator</h1>
+            <p style="color: #94a3b8; font-size: 14px;">Calculate your exact Capital Used, Net P&L & Brokerage</p>
+        </div>
+
+        <div class="calculator-card">
+            <div class="grid-2">
+                <div class="input-group">
+                    <label>Buy Price (₹)</label>
+                    <input type="number" id="buyPrice" placeholder="e.g. 150" oninput="calculate()">
+                </div>
+                <div class="input-group">
+                    <label>Sell Price (₹)</label>
+                    <input type="number" id="sellPrice" placeholder="e.g. 180" oninput="calculate()">
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="input-group">
+                    <label>Lot Size</label>
+                    <select id="lotSize" onchange="calculate()">
+                        <option value="50">50 (Nifty 50)</option>
+                        <option value="15">15 (BankNifty)</option>
+                        <option value="40">40 (FinNifty)</option>
+                        <option value="1">Custom (Enter total qty below)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Number of Lots</label>
+                    <input type="number" id="lotQty" value="1" min="1" oninput="calculate()">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Total Brokerage & Taxes (₹) <small>(Buy + Sell)</small></label>
+                <input type="number" id="brokerage" value="55" oninput="calculate()">
+            </div>
+
+            <div class="results-box">
+                <div class="result-row">
+                    <span>Capital Used:</span>
+                    <span id="capitalUsed">₹0.00</span>
+                </div>
+                <div class="result-row">
+                    <span>Gross P&L:</span>
+                    <span id="grossPL">₹0.00</span>
+                </div>
+                <div class="result-row">
+                    <span>Brokerage Charges:</span>
+                    <span id="totalCharges">₹0.00</span>
+                </div>
+                <div class="result-row">
+                    <span>Net P&L:</span>
+                    <span id="netPL">₹0.00</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEO and Value Content Section -->
+        <div class="seo-content">
+            <h2>How to use this Options Trading Calculator?</h2>
+            <p>Options trading requires strict risk management. Before entering a trade, it is crucial to know your exact capital requirement and the breakeven points after deducting brokerage and exchange transaction charges.</p>
+            <br>
+            <p>To use this tool, simply input your buying premium, selling premium, and select the index (like Nifty 50 or BankNifty). The calculator automatically deducts standard discount broker charges to show your actual Net Profit or Loss.</p>
+        </div>
+    </div>
+
+    <script>
+        function calculate() {
+            let buy = parseFloat(document.getElementById('buyPrice').value) || 0;
+            let sell = parseFloat(document.getElementById('sellPrice').value) || 0;
+            let lotSize = parseFloat(document.getElementById('lotSize').value) || 1;
+            let lotQty = parseFloat(document.getElementById('lotQty').value) || 1;
+            let brokerage = parseFloat(document.getElementById('brokerage').value) || 0;
+
+            let totalQuantity = lotSize * lotQty;
+            let capital = buy * totalQuantity;
+            
+            // Only apply brokerage if a trade is actually executed (capital > 0)
+            let currentBrokerage = capital > 0 ? brokerage : 0; 
+            
+            let gross = (sell - buy) * totalQuantity;
+            let net = gross - currentBrokerage;
+
+            document.getElementById('capitalUsed').innerText = "₹" + capital.toFixed(2);
+            document.getElementById('grossPL').innerText = "₹" + gross.toFixed(2);
+            document.getElementById('totalCharges').innerText = "₹" + currentBrokerage.toFixed(2);
+            
+            let netElement = document.getElementById('netPL');
+            netElement.innerText = "₹" + net.toFixed(2);
+            
+            if (net > 0) {
+                netElement.className = "profit-text";
+            } else if (net < 0) {
+                netElement.className = "loss-text";
+            } else {
+                netElement.className = "";
+                netElement.style.color = "white";
+            }
+        }
+    </script>
+    
+    
+            <!-- SEO and Value Content Section -->
+        <div class="seo-content">
+            <h2>Ultimate Options Trading P&L and Brokerage Calculator</h2>
+            <p>Welcome to the most accurate Options Trading Profit and Loss (P&L) Calculator designed specifically for the Indian F&O (Futures & Options) market. Whether you are trading Nifty 50, BankNifty, or FinNifty, knowing your exact capital requirement and net profit after standard discount brokerage charges is crucial for strict risk management.</p>
+            
+            <br>
+            <h3>Why Use an Options Brokerage Calculator?</h3>
+            <p>Many beginner traders focus only on the gross profit (Buy Price vs. Sell Price) and forget the hidden costs. When you execute an options trade on platforms like Groww, Zerodha, or Angel One, standard flat brokerage charges (usually ₹20 per executed order) plus government taxes (STT, Stamp Duty, GST, Exchange Transaction Charges) apply.</p>
+            <p>Our tool instantly deducts a standard combined fee so you can see your <strong>Actual Net P&L</strong>. It helps you identify your true breakeven point before entering a trade.</p>
+
+            <br>
+            <h3>How to Calculate Nifty and BankNifty P&L?</h3>
+            <ul style="margin-left: 20px; line-height: 1.8;">
+                <li><strong>Enter Premium:</strong> Input your Buy Price and anticipated Sell Price.</li>
+                <li><strong>Select Index:</strong> Choose the correct lot size (e.g., 50 for Nifty 50, 15 for BankNifty).</li>
+                <li><strong>Set Lots:</strong> Enter the number of lots you plan to buy.</li>
+                <li><strong>Analyze:</strong> The tool will instantly display the Total Capital Used, Gross Profit, Estimated Brokerage deductions, and your Final Net P&L.</li>
+            </ul>
+            
+            <br>
+            <p><em>Disclaimer: This tool provides an estimated calculation based on standard discount broker flat fees. Actual taxes and exchange charges may slightly vary based on the specific broker and daily exchange rates. Always verify with your broker's official contract note.</em></p>
+        </div>
+
+</body>
+</html>
